@@ -84,6 +84,8 @@ def convert_files(folder_path, sub_directories_allowed, debug_enabled):
                     debug_enabled and print(
                         Fore.RED + f"ERROR: Failed to convert {filename}: {e}" + Style.RESET_ALL)
                     error_count += 1
+            if filename.lower().endswith(".json"):
+                os.remove(os.path.join(folder_path, filename))
 
 
 def main():
