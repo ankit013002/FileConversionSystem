@@ -11,10 +11,10 @@ success_count = 0
 warning_count = 0
 error_count = 0
 
-
 register_heif_opener()
 
-folder_path = input("Please enter your directory containing HEIC files: ")
+folder_path = input(
+    "Please enter your directory to declutter and convert files (HEIC -> JPG): ")
 debug_enabled_user_input = ""
 while debug_enabled_user_input not in ("y", "n"):
     debug_enabled_user_input = input("Would you like to enable debug? (y/n)")
@@ -22,6 +22,21 @@ while debug_enabled_user_input not in ("y", "n"):
 debug_enabled = debug_enabled_user_input == "y"
 
 for filename in os.listdir(folder_path):
+    if filename.lower().endswith(".jpg"):
+        json_path = os.path.join(
+            folder_path, filename + ".supplemental-metadata.json")
+
+        if os.path.exists(json_path):
+            try:
+                os.remove(json_path)
+                debug_enabled and print(
+                    f"Deleted metadata {os.path.basename(json_path)}" + Style.RESET_ALL)
+                success_count += 1
+            except Exception as e:
+                debug_enabled and print(
+                    Fore.RED + f"ERROR: Failed to delete metadata {os.path.basename(json_path)}: {e}" + Style.RESET_ALL)
+                error_count += 1
+
     if filename.lower().endswith(".heic"):
         base_name = os.path.splitext(filename)[0]
         heic_path = os.path.join(folder_path, filename)
